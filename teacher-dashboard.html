@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding-top: 30px;
+            padding-bottom: 30px;
+            background-color: #f4f4f4;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .section {
+            display: none;
+            margin-top: 20px;
+            padding-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .chart-container {
+            width: 80%; 
+            margin: auto;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .chart {
+            text-align: center;
+        }
+        .chart svg {
+            width: 100px;
+            height: 150px;
+        }
+        .chart .line {
+            stroke: #4caf50;
+            stroke-width: 2;
+        }
+        .chart .circle {
+            fill: #2196F3;
+        }
+        .student-count {
+            text-align: center;
+            margin: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome, <span id="welcomeName"></span>!</h1>
+    <p>You are logged in as a <span id="welcomeRole"></span>.</p>
+
+    <div class="buttons">
+        <button class="button" onclick="showSection('manageStudents')">Manage Students</button>
+        <button class="button" onclick="showSection('classAnalytics')">Class Performance Analytics</button>
+    </div>
+
+    <!-- Class Performance Analytics Section -->
+    <div id="classAnalytics" class="section chart-container">
+        <h2>Class Performance Analytics</h2>
+        <div class="student-count">
+            <p>Number of students managed: <span id="studentCount"></span></p> 
+        </div>
+        
+        <!-- Lollipop Chart -->
+        <div class="chart">
+            <h3>Math - 85%</h3>
+            <svg>
+                <line x1="50" y1="10" x2="50" y2="120" class="line"/>
+                <circle cx="50" cy="10" r="5" class="circle"/>
+            </svg>
+        </div>
+
+        <div class="chart">
+            <h3>Physics - 70%</h3>
+            <svg>
+                <line x1="50" y1="20" x2="50" y2="120" class="line"/>
+                <circle cx="50" cy="20" r="5" class="circle"/>
+            </svg>
+        </div>
+
+        <div class="chart">
+            <h3>OS - 90%</h3>
+            <svg>
+                <line x1="50" y1="5" x2="50" y2="120" class="line"/>
+                <circle cx="50" cy="5" r="5" class="circle"/>
+            </svg>
+        </div>
+
+        <div class="chart">
+            <h3>DS - 60%</h3>
+            <svg>
+                <line x1="50" y1="30" x2="50" y2="120" class="line"/>
+                <circle cx="50" cy="30" r="5" class="circle"/>
+            </svg>
+        </div>
+
+        <div class="chart">
+            <h3>English - 80%</h3>
+            <svg>
+                <line x1="50" y1="10" x2="50" y2="120" class="line"/>
+                <circle cx="50" cy="10" r="5" class="circle"/>
+            </svg>
+        </div>
+
+        <div class="chart">
+            <h3>Computer Science - 75%</h3>
+            <svg>
+                <line x1="50" y1="15" x2="50" y2="120" class="line"/>
+                <circle cx="50" cy="15" r="5" class="circle"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Manage Students Section -->
+    <div id="manageStudents" class="section">
+        <h2>Manage Students</h2>
+        <table id="studentTable">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Student data will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const username = localStorage.getItem('username') || 'Teacher';
+        const role = localStorage.getItem('role') || 'teacher';
+        document.getElementById('welcomeName').textContent = username;
+        document.getElementById('welcomeRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+
+        if (role !== 'teacher') {
+            window.location.href = 'login.html';
+        }
+
+        const studentData = [
+            { id: 101, name: 'John Doe', department: 'CSE' },
+            { id: 102, name: 'Jane Smith', department: 'IT' },
+            { id: 103, name: 'Alice Brown', department: 'ECE' },
+            { id: 104, name: 'Bob Johnson', department: 'MECH' },
+        ];
+
+        const studentTableBody = document.querySelector('#studentTable tbody');
+
+        function renderStudentTable() {
+            studentTableBody.innerHTML = '';
+            studentData.forEach(student => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.id}</td>
+                    <td>${student.name}</td>
+                    <td>${student.department}</td>
+                    <td>
+                        <button onclick="editStudent(${student.id})">Edit</button>
+                        <button onclick="deleteStudent(${student.id})">Delete</button>
+                    </td>
+                `;
+                studentTableBody.appendChild(row);
+            });
+        }
+
+        renderStudentTable();
+
+        function editStudent(studentId) {
+            const student = studentData.find(student => student.id === studentId);
+            const newName = prompt('Edit Student Name', student.name);
+            const newDepartment = prompt('Edit Department', student.department);
+            
+            if (newName && newDepartment) {
+                student.name = newName;
+                student.department = newDepartment;
+                renderStudentTable();
+            }
+        }
+
+        function deleteStudent(studentId) {
+            const studentIndex = studentData.findIndex(student => student.id === studentId);
+            if (studentIndex > -1) {
+                studentData.splice(studentIndex, 1);
+                renderStudentTable();
+            }
+        }
+
+        document.getElementById('studentCount').textContent = studentData.length;
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => section.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .section {
+            display: none;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .chart-container {
+            width: 80%;
+            margin: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome, <span id="welcomeName"></span>!</h1>
+    <p>You are logged in as a <span id="welcomeRole"></span>.</p>
+
+    <div class="buttons">
+        <button class="button" onclick="showSection('reportCard')">Student Report Card</button>
+        <button class="button" onclick="showSection('performanceAnalytics')">Performance Analytics</button>
+    </div>
+
+    <div id="reportCard" class="section">
+        <h2>Your Report Card</h2>
+        <table id="reportTable">
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Total Score</th>
+                    <th>Your Score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Report data will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
+
+    <div id="performanceAnalytics" class="section chart-container">
+        <h2>Yearly Performance Visualization</h2>
+        <canvas id="performanceChart"></canvas>
+    </div>
+
+    <script>
+        // Display username and role
+        const username = localStorage.getItem('username') || 'Student';
+        const role = localStorage.getItem('role') || 'student';
+        document.getElementById('welcomeName').textContent = username;
+        document.getElementById('welcomeRole').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+
+        // Redirect to login page if not a student
+        if (role !== 'student') {
+            window.location.href = 'login.html';
+        }
+
+        // Generate random scores for subjects
+        const reportCardData = [
+            { subject: 'JFSD', total: 100, score: Math.floor(Math.random() * 101) },
+            { subject: 'DWM', total: 100, score: Math.floor(Math.random() * 101) },
+            { subject: 'DAV', total: 100, score: Math.floor(Math.random() * 101) },
+            { subject: 'DBMS', total: 100, score: Math.floor(Math.random() * 101) },
+            { subject: 'DS', total: 100, score: Math.floor(Math.random() * 101) },
+            { subject: 'OS', total: 100, score: Math.floor(Math.random() * 101) },
+            { subject: 'C', total: 100, score: Math.floor(Math.random() * 101) },
+            { subject: 'Java', total: 100, score: Math.floor(Math.random() * 101) },
+            { subject: 'Python', total: 100, score: Math.floor(Math.random() * 101) },
+        ];
+
+        const reportTableBody = document.querySelector('#reportTable tbody');
+        reportCardData.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.subject}</td>
+                <td>${item.total}</td>
+                <td>${item.score}</td>
+            `;
+            reportTableBody.appendChild(row);
+        });
+
+        // Performance chart logic
+        const categories = { Excellent: 0, Good: 0, Average: 0, Poor: 0 };
+        reportCardData.forEach(item => {
+            if (item.score >= 90) categories.Excellent++;
+            else if (item.score >= 75) categories.Good++;
+            else if (item.score >= 50) categories.Average++;
+            else categories.Poor++;
+        });
+
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(categories),
+                datasets: [{
+                    label: 'Number of Subjects',
+                    data: Object.values(categories),
+                    backgroundColor: ['#28a745', '#ffc107', '#17a2b8', '#dc3545'],
+                }],
+            },
+            options: { responsive: true },
+        });
+
+        // Section toggler
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => section.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+        }
+    </script>
+</body>
+</html>
